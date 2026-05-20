@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lus Production</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
+  <style>
+    /* ── Variables ── */
+    :root {
+      --accent:   #C8621A;
+      --accent2:  #FF9A3C;
+      --bg:       #0A0A0A;
+      --card:     #1A1A1A;
+      --card2:    #232323;
+      --border:   rgba(255,255,255,0.08);
+      --text:     #FFFFFF;
+      --muted:    #888;
+      --red:      #FF3B5C;
+      --phone-w:  390px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(ellipse at 20% 20%, #1a0800 0%, #0A0A0A 60%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+      gap: 18px;
+    }
+
+    .brand-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3.5px;
+      color: var(--accent);
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: var(--phone-w);
+      height: 860px;
+      border-radius: 46px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(200,98,26,0.22),
+        0 0 0 8px rgba(200,98,26,0.04),
+        0 36px 90px rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* ── Screens track ── */
+    .clip { flex: 1; overflow: hidden; position: relative; }
+
+    .track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    .screen {
+      min-width: var(--phone-w);
+      width: var(--phone-w);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .scroller {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+    .scroller::-webkit-scrollbar { display: none; }
+
+    /* ── Top bar ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 12px;
+      background: rgba(10,10,10,0.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      line-height: 1;
+    }
+    .logo em { font-style: normal; color: var(--accent); }
+
+    .bar-icons { display: flex; gap: 4px; }
+
+    .ib {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 21px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 10px;
+      line-height: 1;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .ib:hover { background: rgba(255,255,255,0.07); }
+
+    /* ── Stories bar ── */
+    .stories-bar {
+      padding: 13px 0 11px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .stories-row {
+      display: flex;
+      gap: 13px;
+      overflow-x: auto;
+      padding: 2px 16px;
+      scrollbar-width: none;
+    }
+    .stories-row::-webkit-scrollbar { display: none; }
+
+    .s-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .s-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      padding: 2.5px;
+      background: linear-gradient(45deg, #C8621A, #FF9A3C, #FF006E);
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .s-ring.seen { background: rgba(255,255,255,0.18); }
+    .s-ring:hover { transform: scale(1.07); }
+
+    .s-ava {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2.5px solid var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+    }
+
+    .s-name {
+      font-size: 10px;
+      color: var(--muted);
+      max-width: 64px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Post card ── */
+    .post-card { border-bottom: 1px solid var(--border); }
+
+    .post-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 15px;
+    }
+
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .ava {
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .ava-40 { width: 40px; height: 40px; font-size: 15px; }
+    .ava-36 { width: 36px; height: 36px; font-size: 14px; }
+    .ava-32 { width: 32px; height: 32px; font-size: 12px; }
+    .ava-28 { width: 28px; height: 28px; font-size: 11px; }
+    .ava-90 { width: 90px; height: 90px; font-size: 34px; }
+
+    .post-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .post-loc  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Post image ── */
+    .post-img {
+      width: 100%;
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(32px);
+      pointer-events: none;
+    }
+
+    .img-mid {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-badge {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .img-badge i { font-size: 38px; color: rgba(255,255,255,0.55); }
+
+    .post-img:hover .img-badge { background: rgba(255,255,255,0.18); }
+
+    /* ── Post actions ── */
+    .post-acts {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 11px 5px;
+    }
+
+    .acts-l { display: flex; gap: 1px; }
+
+    .act {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 23px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 10px;
+      line-height: 1;
+      transition: background 0.15s, color 0.15s;
+    }
+    .act:hover { background: rgba(255,255,255,0.06); }
+    .act.liked { color: var(--red); }
+    .act.liked i { animation: hpop 0.28s ease; }
+    .act.saved  { color: var(--accent); }
+
+    @keyframes hpop {
+      0%  { transform: scale(1); }
+      40% { transform: scale(1.45); }
+      100%{ transform: scale(1); }
+    }
+
+    .post-stats { padding: 0 15px 5px; }
+    .likes-line { font-size: 13px; font-weight: 600; color: var(--text); }
+    .cap-line   { font-size: 13px; color: var(--text); line-height: 1.55; margin-top: 2px; }
+    .cap-line strong { font-weight: 600; }
+    .more-comments {
+      font-size: 13px; color: var(--muted);
+      cursor: pointer; margin-top: 3px;
+      transition: color 0.15s;
+    }
+    .more-comments:hover { color: #bbb; }
+    .time-line { font-size: 10px; color: #3a3a3a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; }
+
+    /* Inline comment input */
+    .inline-bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 15px 13px;
+    }
+    .inline-inp {
+      flex: 1;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .inline-inp::placeholder { color: #444; }
+    .inline-inp:focus { border-color: rgba(200,98,26,0.5); }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 6px 14px;
+      background: rgba(10,10,10,0.96);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .nb {
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 27px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 14px;
+      line-height: 1;
+      transition: color 0.2s, background 0.15s;
+    }
+    .nb:hover { color: var(--muted); background: rgba(255,255,255,0.05); }
+    .nb.on { color: var(--accent); }
+
+    .nb-fab {
+      width: 52px; height: 52px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 25px; color: #fff;
+      box-shadow: 0 4px 18px rgba(200,98,26,0.5);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .nb-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(200,98,26,0.65); }
+
+    /* ════════════════════════════════
+       SCREEN 2 — POST DETAIL
+    ════════════════════════════════ */
+    .detail-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comment-list {
+      padding: 14px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 17px;
+    }
+
+    .cmt {
+      display: flex;
+      gap: 11px;
+      animation: fup 0.25s ease both;
+    }
+    @keyframes fup {
+      from { opacity: 0; transform: translateY(7px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .cb      { flex: 1; min-width: 0; }
+    .cb-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .cb-text { font-size: 13px; color: #ccc; line-height: 1.55; margin-top: 2px; }
+    .cb-meta { display: flex; gap: 10px; margin-top: 5px; }
+    .cb-meta span { font-size: 11px; color: #444; cursor: pointer; transition: color 0.15s; }
+    .cb-meta span:hover { color: var(--muted); }
+
+    .comment-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px 22px;
+      background: rgba(10,10,10,0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .cmt-inp {
+      flex: 1;
+      background: var(--card2);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .cmt-inp::placeholder { color: #444; }
+    .cmt-inp:focus { border-color: rgba(200,98,26,0.5); }
+
+    .send-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 22px; color: var(--accent);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .send-btn:hover { opacity: 0.7; transform: scale(1.1) translateX(1px); }
+
+    /* ════════════════════════════════
+       SCREEN 3 — PROFILE
+    ════════════════════════════════ */
+    .profile-top {
+      padding: 24px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .p-ava-ring {
+      width: 92px; height: 92px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), #FF006E);
+    }
+
+    .p-ava-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 3px solid var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 33px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .p-name    { font-size: 18px; font-weight: 700; color: var(--text); }
+    .p-handle  { font-size: 13px; color: var(--muted); margin-top: 1px; }
+    .p-bio     { font-size: 13px; color: #bbb; text-align: center; line-height: 1.6; margin-top: 2px; }
+    .p-bio a   { color: var(--accent); text-decoration: none; }
+
+    .p-stats {
+      display: flex;
+      width: 100%;
+      background: var(--card);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .p-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 8px;
+      border-right: 1px solid var(--border);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .p-stat:last-child { border-right: none; }
+    .p-stat:hover { background: rgba(255,255,255,0.04); }
+
+    .p-stat-val { font-size: 17px; font-weight: 700; color: var(--text); }
+    .p-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .p-actions {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .p-btn {
+      flex: 1;
+      padding: 11px 8px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s, transform 0.15s;
+      font-family: inherit;
+    }
+    .p-btn:hover { opacity: 0.84; transform: scale(1.02); }
+    .p-btn:active { transform: scale(0.98); }
+    .p-btn.primary   { background: var(--accent); color: #fff; }
+    .p-btn.secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
+    .p-btn.icon-only { flex: 0; width: 44px; padding: 11px 0; display:flex; align-items:center; justify-content:center; }
+
+    .p-divider { height: 1px; background: var(--border); }
+
+    .p-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .g-cell {
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .g-cell:hover { filter: brightness(1.12); }
+    .g-cell .blob { filter: blur(18px); }
+
+    .g-cell-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .g-cell:hover .g-cell-overlay { background: rgba(0,0,0,0.25); }
+    .g-cell-overlay i { font-size: 26px; color: rgba(255,255,255,0); transition: color 0.2s; }
+    .g-cell:hover .g-cell-overlay i { color: rgba(255,255,255,0.85); }
+
+    /* ════════════════════════════════
+       STORY MODAL
+    ════════════════════════════════ */
+    .story-modal {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+    .story-modal.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .sv-frame {
+      width: 100%;
+      max-width: var(--phone-w);
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sv-bg { position: absolute; inset: 0; transition: background 0.3s ease; }
+
+    /* Decorative blobs inside story */
+    .sv-b1 { position:absolute; width:220px; height:220px; border-radius:50%; filter:blur(40px); top:-50px; left:-60px; opacity:0.7; pointer-events:none; }
+    .sv-b2 { position:absolute; width:200px; height:200px; border-radius:50%; filter:blur(40px); bottom:-40px; right:-50px; opacity:0.7; pointer-events:none; }
+
+    .sv-progs {
+      position: absolute;
+      top: 14px; left: 14px; right: 14px;
+      display: flex; gap: 4px; z-index: 5;
+    }
+    .sv-track {
+      flex: 1; height: 2.5px;
+      background: rgba(255,255,255,0.28);
+      border-radius: 2px; overflow: hidden;
+    }
+    .sv-fill { height: 100%; background: #fff; border-radius: 2px; width: 0%; }
+    .sv-fill.done { width: 100%; }
+
+    .sv-top {
+      position: absolute;
+      top: 28px; left: 14px; right: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 5;
+    }
+    .sv-user { display: flex; align-items: center; gap: 10px; }
+    .sv-ava-el {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; color: #fff;
+    }
+    .sv-uname { font-size: 14px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+    .sv-when  { font-size: 11px; color: rgba(255,255,255,0.6); }
+    .sv-close-btn {
+      background: rgba(0,0,0,0.25); border: none;
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .sv-close-btn:hover { background: rgba(0,0,0,0.45); }
+
+    /* Tap zones */
+    .sv-prev, .sv-next {
+      position: absolute;
+      top: 0; bottom: 0; width: 40%;
+      cursor: pointer; z-index: 4;
+    }
+    .sv-prev { left: 0; }
+    .sv-next { right: 0; }
+
+    /* Center content in story */
+    .sv-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      padding: 80px 20px 100px;
+    }
+
+    .sv-post-img {
+      width: 200px; height: 200px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sv-post-img i { font-size: 64px; color: rgba(255,255,255,0.5); }
+
+    .sv-caption {
+      font-size: 15px; font-weight: 500; color: #fff;
+      text-align: center; line-height: 1.5;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    }
+
+    .sv-bottom {
+      position: absolute;
+      bottom: 24px; left: 14px; right: 14px; z-index: 5;
+    }
+
+    .sv-reply-inp {
+      width: 100%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 26px;
+      padding: 12px 20px;
+      font-size: 14px; color: #fff;
+      font-family: inherit; outline: none;
+      backdrop-filter: blur(4px);
+    }
+    .sv-reply-inp::placeholder { color: rgba(255,255,255,0.45); }
+    .sv-reply-inp:focus { border-color: rgba(255,255,255,0.5); }
+
+    /* ── Notification toast ── */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: rgba(200,98,26,0.92);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      white-space: nowrap;
+      z-index: 4000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 440px) {
+      body   { padding: 0; background: var(--bg); }
+      .phone { width: 100%; border-radius: 0; height: 100dvh; }
+      .brand-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="brand-label">Lus Production · Mobile UI</p>
+
+<div class="phone">
+  <!-- ── Screen clip ── -->
+  <div class="clip">
+    <div class="track" id="track">
+
+      <!-- ══════════════════════════════════
+           S0 — FEED
+      ══════════════════════════════════ -->
+      <div class="screen" id="s0">
+        <div class="top-bar">
+          <span class="logo">Lus <em>Production</em></span>
+          <div class="bar-icons">
+            <button class="ib" title="Notifications"><i class="ti ti-bell"></i></button>
+            <button class="ib" title="Messages"><i class="ti ti-brand-telegram"></i></button>
+          </div>
+        </div>
+        <div class="scroller" id="feedScroll">
+          <div class="stories-bar">
+            <div class="stories-row" id="storiesRow"></div>
+          </div>
+          <div id="feedPosts"></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           S1 — POST DETAIL
+      ══════════════════════════════════ -->
+      <div class="screen" id="s1">
+        <div class="top-bar" id="dtHeader">
+          <div style="display:flex;align-items:center;gap:11px">
+            <button class="ib" onclick="goTo(0)"><i class="ti ti-arrow-left"></i></button>
+            <div class="ava ava-36" id="dtAva"></div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#fff" id="dtName"></div>
+              <div style="font-size:11px;color:var(--muted)" id="dtLoc"></div>
+            </div>
+          </div>
+          <button class="ib"><i class="ti ti-dots-vertical"></i></button>
+        </div>
+        <div class="scroller" id="dtScroll">
+          <div class="detail-img" id="dtImg"></div>
+          <div id="dtActions"></div>
+          <div class="comment-list" id="dtComments"></div>
+        </div>
+        <div class="comment-bar">
+          <div class="ava ava-32" style="background:linear-gradient(135deg,#C8621A,#FF9A3C)">L</div>
+          <input class="cmt-inp" id="dtInput" type="text" placeholder="Add a comment…" onkeydown="submitDetail(event)" />
+          <button class="send-btn" onclick="submitDetail({key:'Enter'})"><i class="ti ti-send"></i></button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           S2 — PROFILE
+      ══════════════════════════════════ -->
+      <div class="screen" id="s2">
+        <div class="top-bar">
+          <button class="ib" onclick="goTo(0)"><i class="ti ti-arrow-left"></i></button>
+          <span class="logo">lus_prod</span>
+          <button class="ib"><i class="ti ti-dots-vertical"></i></button>
+        </div>
+        <div class="scroller">
+          <div class="profile-top">
+            <div class="p-ava-ring">
+              <div class="p-ava-inner" style="background:linear-gradient(135deg,#C8621A,#FF9A3C)">L</div>
+            </div>
+            <div style="text-align:center">
+              <div class="p-name">Lus Production</div>
+              <div class="p-handle">@lus_prod</div>
+              <div class="p-bio" style="margin-top:8px">
+                🎬 Creative studio &amp; visual artists<br>
+                Istanbul · Worldwide 🌍<br>
+                <a href="#">lusprod.co</a>
+              </div>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">
+                <span class="p-stat-val" id="pPostCount">12</span>
+                <span class="p-stat-lbl">Posts</span>
+              </div>
+              <div class="p-stat">
+                <span class="p-stat-val">48.2K</span>
+                <span class="p-stat-lbl">Followers</span>
+              </div>
+              <div class="p-stat">
+                <span class="p-stat-val">312</span>
+                <span class="p-stat-lbl">Following</span>
+              </div>
+            </div>
+            <div class="p-actions">
+              <button class="p-btn primary" id="followBtn" onclick="toggleFollow()">Follow</button>
+              <button class="p-btn secondary" onclick="showToast('Message sent!')">Message</button>
+              <button class="p-btn secondary icon-only"><i class="ti ti-chevron-down" style="font-size:15px"></i></button>
+            </div>
+          </div>
+          <div class="p-divider"></div>
+          <div class="p-grid" id="profileGrid"></div>
+        </div>
+      </div>
+
+    </div><!-- /track -->
+  </div><!-- /clip -->
+
+  <!-- ── Bottom Nav ── -->
+  <nav class="bottom-nav">
+    <button class="nb on" id="nb0" onclick="goTo(0)"><i class="ti ti-home-filled"></i></button>
+    <button class="nb"    id="nb1" onclick="goTo(0); showToast('Explore coming soon')"><i class="ti ti-search"></i></button>
+    <button class="nb-fab" onclick="showToast('Create post')"><i class="ti ti-plus"></i></button>
+    <button class="nb"    id="nb3" onclick="showToast('Activity')"><i class="ti ti-heart"></i></button>
+    <button class="nb"    id="nb4" onclick="goTo(2)"><i class="ti ti-user-circle"></i></button>
+  </nav>
+</div><!-- /phone -->
+
+<!-- ── Story Modal ── -->
+<div class="story-modal" id="storyModal">
+  <div class="sv-frame">
+    <div class="sv-bg" id="svBg"></div>
+    <div class="sv-b1" id="svB1"></div>
+    <div class="sv-b2" id="svB2"></div>
+    <div class="sv-progs" id="svProgs"></div>
+    <div class="sv-top">
+      <div class="sv-user">
+        <div class="sv-ava-el" id="svAva"></div>
+        <div>
+          <div class="sv-uname" id="svName"></div>
+          <div class="sv-when">Just now</div>
+        </div>
+      </div>
+      <button class="sv-close-btn" onclick="closeStory()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="sv-prev" onclick="prevStory()"></div>
+    <div class="sv-next" onclick="nextStory()"></div>
+    <div class="sv-content">
+      <div class="sv-post-img"><i class="ti ti-photo"></i></div>
+      <div class="sv-caption" id="svCaption"></div>
+    </div>
+    <div class="sv-bottom">
+      <input class="sv-reply-inp" type="text" placeholder="Reply to story…" />
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA
+═══════════════════════════════════════ */
+const STORIES = [
+  { id:0, init:'L', name:'lus_prod',  grad:'linear-gradient(45deg,#C8621A,#FF9A3C,#FF006E)', bg:'linear-gradient(135deg,#C8621A 0%,#FF9A3C 55%,#FF006E 100%)', b1:'rgba(200,98,26,0.6)', b2:'rgba(255,0,110,0.5)', caption:'Behind the scenes 🎬', seen:false },
+  { id:1, init:'Z', name:'zarela_r',  grad:'linear-gradient(45deg,#833ab4,#fd1d1d,#fcb045)', bg:'linear-gradient(135deg,#833ab4 0%,#fd1d1d 50%,#fcb045 100%)', b1:'rgba(131,58,180,0.6)', b2:'rgba(252,180,69,0.5)', caption:'Golden hour ✨',     seen:false },
+  { id:2, init:'M', name:'mike_v',    grad:'linear-gradient(45deg,#0099f7,#f11712)',          bg:'linear-gradient(135deg,#0099f7 0%,#f11712 100%)',             b1:'rgba(0,153,247,0.6)', b2:'rgba(241,23,18,0.5)', caption:'Studio session 🎶', seen:false },
+  { id:3, init:'S', name:'sophia_k',  grad:'linear-gradient(45deg,#11998e,#38ef7d)',          bg:'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)',             b1:'rgba(17,153,142,0.6)',b2:'rgba(56,239,125,0.5)',caption:'Paris vibes 🗼',   seen:true  },
+  { id:4, init:'A', name:'alex_v',    grad:'linear-gradient(45deg,#4facfe,#00f2fe)',          bg:'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)',             b1:'rgba(79,172,254,0.6)',b2:'rgba(0,242,254,0.5)', caption:'New drop 👀',     seen:true  },
+  { id:5, init:'R', name:'ruby_x',    grad:'linear-gradient(45deg,#fa709a,#fee140)',          bg:'linear-gradient(135deg,#fa709a 0%,#fee140 100%)',             b1:'rgba(250,112,154,0.6)',b2:'rgba(254,225,64,0.5)',caption:'Summer energy ☀️', seen:true  },
+];
+
+const POSTS = [
+  {
+    id:0, author:'lus_prod', init:'L', loc:'Istanbul, TR',
+    ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',
+    ig:'linear-gradient(135deg,#FF006E 0%,#8B00FF 42%,#00D9FF 100%)',
+    blobs:[
+      {w:210,h:210,c:'rgba(255,0,110,0.5)',s:'top:-42px;left:-42px'},
+      {w:190,h:190,c:'rgba(0,217,255,0.5)',s:'bottom:-32px;right:-32px'},
+      {w:140,h:140,c:'rgba(139,0,255,0.45)',s:'top:50%;left:50%;transform:translate(-50%,-50%)'},
+    ],
+    likes:2203, liked:false, saved:false,
+    cap:'Creative vision meets production excellence 🎬✨ #lusprod',
+    time:'2 hours ago',
+    comments:[
+      {init:'Z',name:'zarela_r',ag:'linear-gradient(135deg,#833ab4,#fcb045)',text:'Incredible work! 🔥🔥',time:'1h ago',likes:8},
+      {init:'M',name:'mike_v',  ag:'linear-gradient(135deg,#0099f7,#f11712)', text:'The colors are unreal 😍',time:'45m ago',likes:3},
+      {init:'S',name:'sophia_k',ag:'linear-gradient(135deg,#11998e,#38ef7d)',text:'Obsessed with this 💫',time:'20m ago',likes:1},
+    ],
+  },
+  {
+    id:1, author:'zarela_r', init:'Z', loc:'Los Angeles, CA',
+    ag:'linear-gradient(135deg,#833ab4,#fcb045)',
+    ig:'linear-gradient(135deg,#833ab4 0%,#fd1d1d 50%,#fcb045 100%)',
+    blobs:[
+      {w:200,h:200,c:'rgba(131,58,180,0.55)',s:'top:-38px;left:-38px'},
+      {w:180,h:180,c:'rgba(252,180,69,0.5)',s:'bottom:-28px;right:-28px'},
+    ],
+    likes:1847, liked:false, saved:false,
+    cap:'Golden hour vibes ✨🌅 #content #creative',
+    time:'5 hours ago',
+    comments:[
+      {init:'L',name:'lus_prod',ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',text:'Stunning as always 🙌',time:'4h ago',likes:5},
+      {init:'A',name:'alex_v',  ag:'linear-gradient(135deg,#4facfe,#00f2fe)', text:'Where was this?! 😮',time:'3h ago',likes:2},
+    ],
+  },
+  {
+    id:2, author:'mike_v', init:'M', loc:'New York, NY',
+    ag:'linear-gradient(135deg,#0099f7,#f11712)',
+    ig:'linear-gradient(135deg,#0f3443 0%,#34e89e 100%)',
+    blobs:[
+      {w:220,h:220,c:'rgba(15,52,67,0.7)',s:'top:-45px;left:-45px'},
+      {w:190,h:190,c:'rgba(52,232,158,0.5)',s:'bottom:-32px;right:-32px'},
+    ],
+    likes:3102, liked:true, saved:true,
+    cap:'Late night sessions 🎶 New project dropping soon 👀',
+    time:'1 day ago',
+    comments:[
+      {init:'R',name:'ruby_x',  ag:'linear-gradient(135deg,#fa709a,#fee140)',text:"Can't wait!! 🎉",time:'20h ago',likes:12},
+      {init:'L',name:'lus_prod',ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',text:'Need to hear this 🔊',time:'18h ago',likes:7},
+      {init:'Z',name:'zarela_r',ag:'linear-gradient(135deg,#833ab4,#fcb045)',text:'Studio vibes 💿',time:'15h ago',likes:4},
+    ],
+  },
+  {
+    id:3, author:'sophia_k', init:'S', loc:'Paris, FR',
+    ag:'linear-gradient(135deg,#11998e,#38ef7d)',
+    ig:'linear-gradient(135deg,#C8621A 0%,#FF9A3C 40%,#FFE066 100%)',
+    blobs:[
+      {w:200,h:200,c:'rgba(200,98,26,0.55)',s:'top:-36px;left:-36px'},
+      {w:175,h:175,c:'rgba(255,224,102,0.45)',s:'bottom:-28px;right:-28px'},
+    ],
+    likes:987, liked:false, saved:false,
+    cap:'Editorial magic ✨ Collaboration with @lus_prod 🎬',
+    time:'2 days ago',
+    comments:[
+      {init:'L',name:'lus_prod',ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',text:'Was a pleasure working together! 🤝',time:'2d ago',likes:15},
+    ],
+  },
+];
+
+const GRID = [
+  'linear-gradient(135deg,#FF006E 0%,#8B00FF 50%,#00D9FF 100%)',
+  'linear-gradient(135deg,#C8621A 0%,#FF9A3C 55%,#FFE066 100%)',
+  'linear-gradient(135deg,#0f3443 0%,#34e89e 100%)',
+  'linear-gradient(135deg,#833ab4 0%,#fd1d1d 50%,#fcb045 100%)',
+  'linear-gradient(135deg,#0099f7 0%,#f11712 100%)',
+  'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)',
+  'linear-gradient(135deg,#fa709a 0%,#fee140 100%)',
+  'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)',
+  'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',
+  'linear-gradient(135deg,#f7971e 0%,#ffd200 100%)',
+  'linear-gradient(135deg,#56ab2f 0%,#a8e063 100%)',
+  'linear-gradient(135deg,#ee0979 0%,#ff6a00 100%)',
+];
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let screen   = 0;
+let openPost = 0;
+let followed = false;
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
+function goTo(idx) {
+  screen = idx;
+  document.getElementById('track').style.transform = `translateX(${-idx * 390}px)`;
+  ['nb0','nb1','nb3','nb4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('on');
+  });
+  if (idx === 0) document.getElementById('nb0').classList.add('on');
+  if (idx === 2) document.getElementById('nb4').classList.add('on');
+}
+
+function openPostDetail(id) {
+  openPost = id;
+  renderDetail(id);
+  goTo(1);
+  setTimeout(() => document.getElementById('dtScroll').scrollTo(0, 0), 60);
+}
+
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function blobs(arr) {
+  return arr.map(b =>
+    `<div class="blob" style="width:${b.w}px;height:${b.h}px;background:${b.c};${b.s}"></div>`
+  ).join('');
+}
+
+function fmt(n) {
+  return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'K' : String(n);
+}
+
+/* ═══════════════════════════════════════
+   RENDER STORIES
+═══════════════════════════════════════ */
+function renderStories() {
+  document.getElementById('storiesRow').innerHTML = STORIES.map(s => `
+    <div class="s-item" onclick="openStory(${s.id})">
+      <div class="s-ring${s.seen ? ' seen' : ''}">
+        <div class="s-ava" style="background:${s.grad}">${s.init}</div>
+      </div>
+      <span class="s-name">${s.name}</span>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER FEED
+═══════════════════════════════════════ */
+function renderFeed() {
+  document.getElementById('feedPosts').innerHTML = POSTS.map(p => `
+    <div class="post-card" id="pc${p.id}">
+      <div class="post-head">
+        <div class="post-user" onclick="goTo(2)">
+          <div class="ava ava-40" style="background:${p.ag}">${p.init}</div>
+          <div>
+            <div class="post-name">${p.author}</div>
+            <div class="post-loc">${p.loc}</div>
+          </div>
+        </div>
+        <button class="ib" style="font-size:19px"><i class="ti ti-dots"></i></button>
+      </div>
+      <div class="post-img" onclick="openPostDetail(${p.id})" style="background:${p.ig}">
+        ${blobs(p.blobs)}
+        <div class="img-mid"><div class="img-badge"><i class="ti ti-photo"></i></div></div>
+      </div>
+      <div class="post-acts">
+        <div class="acts-l">
+          <button class="act${p.liked ? ' liked' : ''}" id="fl${p.id}" onclick="toggleLike(${p.id})">
+            <i class="ti ${p.liked ? 'ti-heart-filled' : 'ti-heart'}"></i>
+          </button>
+          <button class="act" onclick="openPostDetail(${p.id})"><i class="ti ti-message-circle"></i></button>
+          <button class="act" onclick="showToast('Shared!')"><i class="ti ti-send"></i></button>
+        </div>
+        <button class="act${p.saved ? ' saved' : ''}" id="fs${p.id}" onclick="toggleSave(${p.id})">
+          <i class="ti ${p.saved ? 'ti-bookmark-filled' : 'ti-bookmark'}"></i>
+        </button>
+      </div>
+      <div class="post-stats">
+        <div class="likes-line" id="fll${p.id}">${fmt(p.likes)} likes</div>
+        <div class="cap-line"><strong>${p.author}</strong> ${p.cap}</div>
+        ${p.comments.length > 1
+          ? `<div class="more-comments" onclick="openPostDetail(${p.id})">View all ${p.comments.length} comments</div>`
+          : ''}
+        <div class="time-line">${p.time}</div>
+      </div>
+      <div class="inline-bar">
+        <div class="ava ava-28" style="background:linear-gradient(135deg,#C8621A,#FF9A3C)">L</div>
+        <input class="inline-inp" type="text" placeholder="Add a comment…" onkeydown="submitFeed(event,${p.id})" />
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER DETAIL
+═══════════════════════════════════════ */
+function renderDetail(id) {
+  const p = POSTS[id];
+
+  // header
+  const ava = document.getElementById('dtAva');
+  ava.style.background = p.ag;
+  ava.textContent = p.init;
+  document.getElementById('dtName').textContent = p.author;
+  document.getElementById('dtLoc').textContent  = p.loc;
+
+  // image
+  document.getElementById('dtImg').style.background = p.ig;
+  document.getElementById('dtImg').innerHTML =
+    blobs(p.blobs) +
+    `<div class="img-mid"><div class="img-badge" style="width:110px;height:110px"><i class="ti ti-photo" style="font-size:44px"></i></div></div>`;
+
+  // actions block
+  document.getElementById('dtActions').innerHTML = `
+    <div class="post-acts">
+      <div class="acts-l">
+        <button class="act${p.liked ? ' liked' : ''}" id="dl${p.id}" onclick="toggleLike(${p.id})">
+          <i class="ti ${p.liked ? 'ti-heart-filled' : 'ti-heart'}"></i>
+        </button>
+        <button class="act"><i class="ti ti-message-circle"></i></button>
+        <button class="act" onclick="showToast('Shared!')"><i class="ti ti-send"></i></button>
+      </div>
+      <button class="act${p.saved ? ' saved' : ''}" id="ds${p.id}" onclick="toggleSave(${p.id})">
+        <i class="ti ${p.saved ? 'ti-bookmark-filled' : 'ti-bookmark'}"></i>
+      </button>
+    </div>
+    <div class="post-stats" style="padding-bottom:10px">
+      <div class="likes-line" id="dll${p.id}">${fmt(p.likes)} likes</div>
+      <div class="cap-line"><strong>${p.author}</strong> ${p.cap}</div>
+      <div class="time-line">${p.time}</div>
+    </div>
+    <div style="height:1px;background:var(--border)"></div>
+  `;
+
+  renderComments(id);
+}
+
+function renderComments(id) {
+  const p = POSTS[id];
+  document.getElementById('dtComments').innerHTML = p.comments.map((c, i) => `
+    <div class="cmt" style="animation-delay:${i * 0.06}s">
+      <div class="ava ava-36" style="background:${c.ag}">${c.init}</div>
+      <div class="cb">
+        <span class="cb-name">${c.name}</span>
+        <p class="cb-text">${c.text}</p>
+        <div class="cb-meta">
+          <span>${c.time}</span>
+          ${c.likes ? `<span>${c.likes} likes</span>` : ''}
+          <span>Reply</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER PROFILE GRID
+═══════════════════════════════════════ */
+function renderProfileGrid() {
+  document.getElementById('profileGrid').innerHTML = GRID.map((g, i) => `
+    <div class="g-cell" onclick="openPostDetail(${i % POSTS.length})" style="background:${g}">
+      <div class="blob" style="width:80px;height:80px;background:rgba(255,255,255,0.2);top:-10px;left:-10px"></div>
+      <div class="blob" style="width:70px;height:70px;background:rgba(0,0,0,0.3);bottom:-10px;right:-10px"></div>
+      <div class="g-cell-overlay"><i class="ti ti-photo"></i></div>
+    </div>
+  `).join('');
+  document.getElementById('pPostCount').textContent = GRID.length;
+}
+
+/* ═══════════════════════════════════════
+   INTERACTIONS
+═══════════════════════════════════════ */
+function toggleLike(id) {
+  const p  = POSTS[id];
+  p.liked  = !p.liked;
+  p.likes += p.liked ? 1 : -1;
+
+  [['fl','fll'], ['dl','dll']].forEach(([btnPfx, cntPfx]) => {
+    const btn = document.getElementById(`${btnPfx}${id}`);
+    const cnt = document.getElementById(`${cntPfx}${id}`);
+    if (btn) {
+      btn.classList.toggle('liked', p.liked);
+      btn.querySelector('i').className = `ti ${p.liked ? 'ti-heart-filled' : 'ti-heart'}`;
+    }
+    if (cnt) cnt.textContent = `${fmt(p.likes)} likes`;
+  });
+}
+
+function toggleSave(id) {
+  const p = POSTS[id];
+  p.saved = !p.saved;
+  ['fs','ds'].forEach(pfx => {
+    const btn = document.getElementById(`${pfx}${id}`);
+    if (!btn) return;
+    btn.classList.toggle('saved', p.saved);
+    btn.querySelector('i').className = `ti ${p.saved ? 'ti-bookmark-filled' : 'ti-bookmark'}`;
+  });
+  showToast(p.saved ? 'Saved to collection' : 'Removed from saved');
+}
+
+function submitFeed(e, id) {
+  if (e.key !== 'Enter') return;
+  const inp  = e.target;
+  const text = inp.value.trim();
+  if (!text) return;
+  POSTS[id].comments.push({
+    init:'L', name:'lus_prod',
+    ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',
+    text, time:'Just now', likes:0,
+  });
+  inp.value = '';
+  const el = document.querySelector(`#pc${id} .more-comments`);
+  if (el) el.textContent = `View all ${POSTS[id].comments.length} comments`;
+  showToast('Comment posted!');
+}
+
+function submitDetail(e) {
+  if (e.key !== 'Enter') return;
+  const inp  = document.getElementById('dtInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  POSTS[openPost].comments.push({
+    init:'L', name:'lus_prod',
+    ag:'linear-gradient(135deg,#C8621A,#FF9A3C)',
+    text, time:'Just now', likes:0,
+  });
+  inp.value = '';
+  renderComments(openPost);
+  // update "view all" count on feed card
+  const el = document.querySelector(`#pc${openPost} .more-comments`);
+  if (el) el.textContent = `View all ${POSTS[openPost].comments.length} comments`;
+  showToast('Comment posted!');
+  setTimeout(() => {
+    const last = document.querySelector('#dtComments .cmt:last-child');
+    last?.scrollIntoView({ behavior: 'smooth' });
+  }, 60);
+}
+
+function toggleFollow() {
+  followed = !followed;
+  const btn = document.getElementById('followBtn');
+  btn.textContent  = followed ? 'Following' : 'Follow';
+  btn.className    = `p-btn ${followed ? 'secondary' : 'primary'}`;
+  showToast(followed ? 'Following lus_prod' : 'Unfollowed lus_prod');
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ═══════════════════════════════════════
+   STORY VIEWER
+═══════════════════════════════════════ */
+let svIdx      = 0;
+let svTick     = null;
+let svProgress = 0;
+const SV_DUR   = 5000;
+const TICK     = 50;
+
+function openStory(id) {
+  svIdx = id;
+  document.getElementById('storyModal').classList.add('open');
+  renderSV();
+}
+
+function closeStory() {
+  clearInterval(svTick);
+  document.getElementById('storyModal').classList.remove('open');
+  STORIES[svIdx].seen = true;
+  renderStories();
+}
+
+function renderSV() {
+  clearInterval(svTick);
+  svProgress = 0;
+
+  const s = STORIES[svIdx];
+  STORIES[svIdx].seen = true;
+
+  document.getElementById('svBg').style.background = s.bg;
+  document.getElementById('svB1').style.background = s.b1;
+  document.getElementById('svB2').style.background = s.b2;
+  document.getElementById('svAva').textContent      = s.init;
+  document.getElementById('svName').textContent     = s.name;
+  document.getElementById('svCaption').textContent  = s.caption;
+
+  // progress bars
+  document.getElementById('svProgs').innerHTML = STORIES.map((_, i) => `
+    <div class="sv-track">
+      <div class="sv-fill${i < svIdx ? ' done' : ''}" id="svf${i}"></div>
+    </div>
+  `).join('');
+
+  const fill = document.getElementById(`svf${svIdx}`);
+
+  svTick = setInterval(() => {
+    svProgress = Math.min(svProgress + (TICK / SV_DUR) * 100, 100);
+    fill.style.width = svProgress + '%';
+    if (svProgress >= 100) {
+      clearInterval(svTick);
+      nextStory();
+    }
+  }, TICK);
+}
+
+function nextStory() {
+  if (svIdx < STORIES.length - 1) {
+    svIdx++;
+    renderSV();
+  } else {
+    closeStory();
+  }
+}
+
+function prevStory() {
+  if (svIdx > 0) {
+    svIdx--;
+    renderSV();
+  } else {
+    // restart current
+    svProgress = 0;
+    renderSV();
+  }
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+renderStories();
+renderFeed();
+renderProfileGrid();
+goTo(0);
+</script>
+</body>
+</html>
