@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Redesign</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --neon-pink: #FF006E;
+      --neon-cyan: #00D9FF;
+      --neon-purple: #8B00FF;
+      --dark-bg: #1A1A1A;
+      --dark-surface: #242424;
+      --dark-border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      gap: 24px;
+    }
+
+    .page-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .screens {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 375px;
+      height: 812px;
+      border-radius: 44px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow:
+        0 0 0 1.5px rgba(0,0,0,0.12),
+        0 24px 64px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .phone-light { background: #fff; }
+    .phone-dark  { background: var(--dark-bg); }
+
+    /* scrollable inner */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LEFT SCREEN — LIGHT FEED
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    /* Header */
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 12px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple), var(--neon-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .icon-row {
+      display: flex;
+      gap: 18px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #111;
+      font-size: 22px;
+      line-height: 1;
+      padding: 2px;
+      transition: transform 0.18s, opacity 0.18s;
+    }
+    .icon-btn:hover { transform: scale(1.12); opacity: 0.7; }
+    .icon-btn i { display: block; }
+
+    /* Stories */
+    .stories-bar {
+      padding: 14px 0 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .stories-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 2px 20px;
+      scrollbar-width: none;
+    }
+    .stories-scroll::-webkit-scrollbar { display: none; }
+
+    .story {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .story-ring {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      transition: transform 0.2s;
+    }
+    .story-ring.seen {
+      background: #d0d0d0;
+    }
+    .story-ring:hover { transform: scale(1.06); }
+
+    .story-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      user-select: none;
+    }
+
+    .story-label {
+      font-size: 11px;
+      color: #444;
+      max-width: 66px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Post */
+    .post { border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+    .post-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .post-ava {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .post-meta { display: flex; flex-direction: column; gap: 1px; }
+    .post-name { font-size: 14px; font-weight: 600; color: #111; }
+    .post-loc  { font-size: 11px; color: #999; }
+
+    /* Gradient image placeholder */
+    .post-img {
+      width: 100%;
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(28px);
+    }
+
+    .post-img-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-img-grid {
+      width: 140px;
+      height: 140px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-img-grid i {
+      font-size: 48px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Actions */
+    .post-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px 6px;
+    }
+
+    .actions-left { display: flex; gap: 4px; }
+
+    .act-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 24px;
+      color: #111;
+      line-height: 1;
+      transition: background 0.15s, transform 0.15s, color 0.15s;
+    }
+    .act-btn:hover { background: rgba(0,0,0,0.05); transform: scale(1.08); }
+    .act-btn.liked { color: var(--neon-pink); }
+    .act-btn.liked i { animation: heartPop 0.28s ease; }
+    @keyframes heartPop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.45); }
+      100% { transform: scale(1); }
+    }
+
+    .post-likes { font-size: 14px; font-weight: 600; color: #111; padding: 0 16px 5px; }
+    .post-cap   { font-size: 14px; color: #111; padding: 0 16px 5px; line-height: 1.5; }
+    .post-cap strong { font-weight: 600; }
+    .post-view-comments {
+      font-size: 14px;
+      color: #888;
+      padding: 0 16px 5px;
+      cursor: pointer;
+    }
+    .post-view-comments:hover { color: #555; }
+    .post-time { font-size: 10px; color: #bbb; padding: 0 16px 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 8px 22px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 14px;
+      font-size: 26px;
+      color: #111;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover { background: rgba(0,0,0,0.06); }
+    .nav-btn.active { color: #000; }
+
+    .nav-fab {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #FF4081 0%, #FF9A3C 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(255,64,129,0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .nav-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 22px rgba(255,64,129,0.55);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       RIGHT SCREEN — DARK DETAIL
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(26,26,26,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--dark-border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .detail-header-left { display: flex; align-items: center; gap: 12px; }
+
+    .d-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      padding: 4px;
+      transition: opacity 0.18s;
+    }
+    .d-icon-btn:hover { opacity: 0.65; }
+
+    .detail-ava {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .detail-name { font-size: 15px; font-weight: 600; color: #fff; }
+
+    /* Detail image */
+    .detail-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #FF6B9D 0%, #8B5CF6 50%, #14B8A6 100%);
+    }
+
+    /* Dark actions */
+    .detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 10px;
+    }
+
+    .d-actions-left { display: flex; gap: 22px; align-items: center; }
+
+    .d-act {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.18s;
+    }
+    .d-act:hover { opacity: 0.7; }
+    .d-act i { font-size: 22px; color: #fff; transition: color 0.2s, transform 0.2s; }
+    .d-act.liked i { color: var(--neon-pink); }
+    .d-act.liked i { animation: heartPop 0.28s ease; }
+    .d-act span { font-size: 14px; color: #aaa; font-weight: 500; }
+
+    .d-bk-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: #fff;
+      transition: opacity 0.18s;
+    }
+    .d-bk-btn:hover { opacity: 0.7; }
+
+    /* Divider */
+    .divider { height: 1px; background: var(--dark-border); margin: 0 20px; }
+
+    /* Comments list */
+    .comments-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 18px; }
+
+    .comment {
+      display: flex;
+      gap: 12px;
+      animation: fadeUp 0.3s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .c-ava {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .c-body { flex: 1; }
+    .c-name { font-size: 14px; font-weight: 600; color: #fff; }
+    .c-text { font-size: 14px; color: #ccc; margin-top: 2px; line-height: 1.5; }
+    .c-meta { display: flex; gap: 12px; margin-top: 6px; }
+    .c-meta span { font-size: 12px; color: #555; cursor: pointer; transition: color 0.15s; }
+    .c-meta span:hover { color: #999; }
+
+    /* Comment input */
+    .comment-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px 26px;
+      background: rgba(26,26,26,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--dark-border);
+    }
+
+    .c-input-ava {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .c-input {
+      flex: 1;
+      background: #2A2A2A;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: inherit;
+    }
+    .c-input::placeholder { color: #555; }
+    .c-input:focus {
+      border-color: rgba(255,0,110,0.55);
+      background: #2F2F2F;
+    }
+
+    .c-send {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: var(--neon-cyan);
+      transition: opacity 0.18s, transform 0.18s;
+      line-height: 1;
+    }
+    .c-send:hover { opacity: 0.7; transform: scale(1.12); }
+
+    /* ── Story Modal ── */
+    .story-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .story-modal.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .story-viewer {
+      width: 340px;
+      height: 600px;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.5);
+    }
+
+    .sv-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .sv-prog-row {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      gap: 4px;
+    }
+    .sv-prog-track {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.35);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .sv-prog-fill {
+      height: 100%;
+      background: #fff;
+      width: 0%;
+      transition: width 0.08s linear;
+    }
+
+    .sv-top {
+      position: absolute;
+      top: 32px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sv-user { display: flex; align-items: center; gap: 10px; }
+    .sv-ava {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sv-name { font-size: 14px; font-weight: 600; color: #fff; }
+    .sv-time { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+
+    .sv-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .sv-close:hover { opacity: 0.75; }
+
+    .sv-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+    }
+    .sv-reply {
+      width: 100%;
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 24px;
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+    }
+    .sv-reply::placeholder { color: rgba(255,255,255,0.5); }
+
+    /* ── Responsive ── */
+    @media (max-width: 840px) {
+      .screens { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 420px) {
+      .phone { width: 100%; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="page-title">Instagram — Mobile UI Redesign</p>
+
+<div class="screens">
+
+  <!-- ═══════════════════════════════
+       LEFT  —  LIGHT FEED
+  ═══════════════════════════════ -->
+  <div class="phone phone-light">
+
+    <!-- Header -->
+    <div class="feed-header">
+      <span class="logo">Instagram</span>
+      <div class="icon-row">
+        <button class="icon-btn" aria-label="Camera"><i class="ti ti-camera"></i></button>
+        <button class="icon-btn" aria-label="Messages"><i class="ti ti-brand-telegram"></i></button>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- Stories -->
+      <div class="stories-bar">
+        <div class="stories-scroll">
+          <div class="story" data-initial="J" data-name="janet_doe" onclick="openStory(this)">
+            <div class="story-ring">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#FF006E,#00D9FF)">J</div>
+            </div>
+            <span class="story-label">janet_doe</span>
+          </div>
+          <div class="story" data-initial="Z" data-name="zarela_r" onclick="openStory(this)">
+            <div class="story-ring">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#833ab4,#fcb045)">Z</div>
+            </div>
+            <span class="story-label">zarela_r</span>
+          </div>
+          <div class="story" data-initial="M" data-name="mike_art" onclick="openStory(this)">
+            <div class="story-ring">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#0099f7,#f11712)">M</div>
+            </div>
+            <span class="story-label">mike_art</span>
+          </div>
+          <div class="story" data-initial="S" data-name="sophia_k" onclick="openStory(this)">
+            <div class="story-ring">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#11998e,#38ef7d)">S</div>
+            </div>
+            <span class="story-label">sophia_k</span>
+          </div>
+          <div class="story" data-initial="A" data-name="alex_v" onclick="openStory(this)">
+            <div class="story-ring seen">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">A</div>
+            </div>
+            <span class="story-label">alex_v</span>
+          </div>
+          <div class="story" data-initial="R" data-name="ruby_x" onclick="openStory(this)">
+            <div class="story-ring seen">
+              <div class="story-avatar" style="background:linear-gradient(135deg,#fa709a,#fee140)">R</div>
+            </div>
+            <span class="story-label">ruby_x</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 1 -->
+      <div class="post">
+        <div class="post-head">
+          <div class="post-user">
+            <div class="post-ava" style="background:linear-gradient(135deg,#FF006E,#00D9FF)">J</div>
+            <div class="post-meta">
+              <span class="post-name">janet_doe</span>
+              <span class="post-loc">New York, NY</span>
+            </div>
+          </div>
+          <button class="icon-btn" style="font-size:20px"><i class="ti ti-dots"></i></button>
+        </div>
+
+        <!-- Neon image -->
+        <div class="post-img" style="background:linear-gradient(135deg,#FF006E 0%,#8B00FF 45%,#00D9FF 100%)">
+          <div class="blob" style="width:200px;height:200px;background:rgba(255,0,110,0.55);top:-40px;left:-40px"></div>
+          <div class="blob" style="width:180px;height:180px;background:rgba(0,217,255,0.55);bottom:-30px;right:-30px"></div>
+          <div class="blob" style="width:130px;height:130px;background:rgba(139,0,255,0.5);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+          <div class="post-img-inner">
+            <div class="post-img-grid">
+              <i class="ti ti-photo"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-actions">
+          <div class="actions-left">
+            <button class="act-btn" id="lightLikeBtn" onclick="toggleLightLike()" aria-label="Like">
+              <i class="ti ti-heart"></i>
+            </button>
+            <button class="act-btn" onclick="scrollToDetail()" aria-label="Comment">
+              <i class="ti ti-message-circle"></i>
+            </button>
+            <button class="act-btn" aria-label="Share"><i class="ti ti-send"></i></button>
+          </div>
+          <button class="act-btn" id="lightBookmark" onclick="toggleBookmark('lightBookmark')" aria-label="Bookmark">
+            <i class="ti ti-bookmark"></i>
+          </button>
+        </div>
+
+        <div class="post-likes" id="lightLikeCount">2,203 likes</div>
+        <div class="post-cap"><strong>janet_doe</strong> Our blue top is available now! Check the link in bio 🔥✨</div>
+        <div class="post-view-comments" onclick="scrollToDetail()">View all 15 comments</div>
+        <div class="post-time">2 hours ago</div>
+      </div>
+
+      <!-- Post 2 -->
+      <div class="post">
+        <div class="post-head">
+          <div class="post-user">
+            <div class="post-ava" style="background:linear-gradient(135deg,#4ECDC4,#44A08D)">Z</div>
+            <div class="post-meta">
+              <span class="post-name">zarela_r</span>
+              <span class="post-loc">Los Angeles, CA</span>
+            </div>
+          </div>
+          <button class="icon-btn" style="font-size:20px"><i class="ti ti-dots"></i></button>
+        </div>
+        <div class="post-img" style="background:linear-gradient(135deg,#833ab4 0%,#fd1d1d 50%,#fcb045 100%)">
+          <div class="blob" style="width:190px;height:190px;background:rgba(131,58,180,0.55);top:-35px;left:-35px"></div>
+          <div class="blob" style="width:170px;height:170px;background:rgba(252,180,69,0.55);bottom:-25px;right:-25px"></div>
+          <div class="post-img-inner">
+            <div class="post-img-grid"><i class="ti ti-photo"></i></div>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="actions-left">
+            <button class="act-btn" id="like2" onclick="toggleLike2()" aria-label="Like"><i class="ti ti-heart"></i></button>
+            <button class="act-btn" aria-label="Comment"><i class="ti ti-message-circle"></i></button>
+            <button class="act-btn" aria-label="Share"><i class="ti ti-send"></i></button>
+          </div>
+          <button class="act-btn" id="bk2" onclick="toggleBookmark('bk2')" aria-label="Bookmark"><i class="ti ti-bookmark"></i></button>
+        </div>
+        <div class="post-likes" id="like2Count">1,847 likes</div>
+        <div class="post-cap"><strong>zarela_r</strong> Golden hour vibes ✨🌅</div>
+        <div class="post-time">5 hours ago</div>
+      </div>
+
+    </div><!-- /scroll-area -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" aria-label="Home"><i class="ti ti-home-filled"></i></button>
+      <button class="nav-btn" aria-label="Search"><i class="ti ti-search"></i></button>
+      <button class="nav-fab" aria-label="Create"><i class="ti ti-plus"></i></button>
+      <button class="nav-btn" aria-label="Likes"><i class="ti ti-heart"></i></button>
+      <button class="nav-btn" aria-label="Profile"><i class="ti ti-user-circle"></i></button>
+    </div>
+
+  </div><!-- /phone-light -->
+
+
+  <!-- ═══════════════════════════════
+       RIGHT  —  DARK DETAIL
+  ═══════════════════════════════ -->
+  <div class="phone phone-dark" id="detailScreen">
+
+    <div class="detail-header">
+      <div class="detail-header-left">
+        <button class="d-icon-btn" onclick="scrollToFeed()" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+        <div class="detail-ava" style="background:linear-gradient(135deg,#FF006E,#00D9FF)">J</div>
+        <span class="detail-name">janet_doe</span>
+      </div>
+      <button class="d-icon-btn" aria-label="More"><i class="ti ti-dots-vertical"></i></button>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- Detail image -->
+      <div class="detail-img">
+        <div class="blob" style="width:220px;height:220px;background:rgba(255,107,157,0.5);top:-50px;left:-50px"></div>
+        <div class="blob" style="width:200px;height:200px;background:rgba(20,184,166,0.5);bottom:-40px;right:-40px"></div>
+        <div class="blob" style="width:160px;height:160px;background:rgba(139,92,246,0.55);top:45%;left:40%;transform:translate(-50%,-50%)"></div>
+        <div class="post-img-inner">
+          <div class="post-img-grid" style="width:120px;height:120px"><i class="ti ti-photo" style="font-size:40px"></i></div>
+        </div>
+      </div>
+
+      <!-- Dark actions -->
+      <div class="detail-actions">
+        <div class="d-actions-left">
+          <div class="d-act liked" id="darkLikeAct" onclick="toggleDarkLike()">
+            <i class="ti ti-heart-filled"></i>
+            <span id="darkLikeCount">2,203</span>
+          </div>
+          <div class="d-act" onclick="focusComment()">
+            <i class="ti ti-message-circle"></i>
+            <span>15</span>
+          </div>
+        </div>
+        <button class="d-bk-btn" id="darkBk" onclick="toggleBookmark('darkBk')" aria-label="Bookmark">
+          <i class="ti ti-bookmark"></i>
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Comments -->
+      <div class="comments-list">
+
+        <div class="comment" style="animation-delay:0.05s">
+          <div class="c-ava" style="background:linear-gradient(135deg,#FF6B6B,#FFE66D)">J</div>
+          <div class="c-body">
+            <span class="c-name">Janet Martin</span>
+            <p class="c-text">Our blue top is available! Check the link in bio 🛍️</p>
+            <div class="c-meta">
+              <span>2h ago</span>
+              <span>3 likes</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment" style="animation-delay:0.10s">
+          <div class="c-ava" style="background:linear-gradient(135deg,#4ECDC4,#44A08D)">Z</div>
+          <div class="c-body">
+            <span class="c-name">Zarela Reed</span>
+            <p class="c-text">Great! 🔥 🔥 absolutely love this look!</p>
+            <div class="c-meta">
+              <span>1h ago</span>
+              <span>3 likes • Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment" style="animation-delay:0.15s">
+          <div class="c-ava" style="background:linear-gradient(135deg,#667eea,#764ba2)">M</div>
+          <div class="c-body">
+            <span class="c-name">mike_art</span>
+            <p class="c-text">Amazing colors! 😍 Where did you shoot this?</p>
+            <div class="c-meta">
+              <span>45m ago</span>
+              <span>1 like • Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment" style="animation-delay:0.20s">
+          <div class="c-ava" style="background:linear-gradient(135deg,#11998e,#38ef7d)">S</div>
+          <div class="c-body">
+            <span class="c-name">sophia_k</span>
+            <p class="c-text">Obsessed with this look 💫✨ inspo!</p>
+            <div class="c-meta">
+              <span>30m ago</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment" style="animation-delay:0.25s">
+          <div class="c-ava" style="background:linear-gradient(135deg,#f7971e,#ffd200)">A</div>
+          <div class="c-body">
+            <span class="c-name">alex_v</span>
+            <p class="c-text">The neon palette 🎨🔥 chef's kiss!</p>
+            <div class="c-meta">
+              <span>12m ago</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /scroll-area -->
+
+    <!-- Comment input -->
+    <div class="comment-bar">
+      <div class="c-input-ava">U</div>
+      <input
+        id="commentInput"
+        class="c-input"
+        type="text"
+        placeholder="Add a comment..."
+        onkeydown="handleCommentKey(event)"
+      />
+      <button class="c-send" onclick="sendComment()" aria-label="Send"><i class="ti ti-send"></i></button>
+    </div>
+
+  </div><!-- /phone-dark -->
+
+</div><!-- /screens -->
+
+
+<!-- Story modal -->
+<div class="story-modal" id="storyModal" onclick="handleModalBgClick(event)">
+  <div class="story-viewer" id="storyViewer">
+    <div class="sv-bg" id="svBg"></div>
+
+    <div class="sv-prog-row">
+      <div class="sv-prog-track"><div class="sv-prog-fill" id="svFill1"></div></div>
+      <div class="sv-prog-track"><div class="sv-prog-fill" id="svFill2"></div></div>
+      <div class="sv-prog-track"><div class="sv-prog-fill" id="svFill3"></div></div>
+    </div>
+
+    <div class="sv-top">
+      <div class="sv-user">
+        <div class="sv-ava" id="svAva">J</div>
+        <div>
+          <div class="sv-name" id="svName">janet_doe</div>
+          <div class="sv-time">Just now</div>
+        </div>
+      </div>
+      <button class="sv-close" onclick="closeStory()">&#x2715;</button>
+    </div>
+
+    <div class="sv-bottom">
+      <input class="sv-reply" type="text" placeholder="Send a message…" />
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Light like ──
+  let lightLiked = false, lightLikes = 2203;
+  function toggleLightLike() {
+    lightLiked = !lightLiked;
+    lightLikes += lightLiked ? 1 : -1;
+    const btn = document.getElementById('lightLikeBtn');
+    btn.classList.toggle('liked', lightLiked);
+    btn.querySelector('i').className = lightLiked ? 'ti ti-heart-filled' : 'ti ti-heart';
+    document.getElementById('lightLikeCount').textContent = lightLikes.toLocaleString() + ' likes';
+  }
+
+  // ── Post 2 like ──
+  let like2State = false, like2Ct = 1847;
+  function toggleLike2() {
+    like2State = !like2State;
+    like2Ct += like2State ? 1 : -1;
+    const btn = document.getElementById('like2');
+    btn.classList.toggle('liked', like2State);
+    btn.querySelector('i').className = like2State ? 'ti ti-heart-filled' : 'ti ti-heart';
+    document.getElementById('like2Count').textContent = like2Ct.toLocaleString() + ' likes';
+  }
+
+  // ── Dark like ──
+  let darkLiked = true, darkLikes = 2203;
+  function toggleDarkLike() {
+    darkLiked = !darkLiked;
+    darkLikes += darkLiked ? 1 : -1;
+    const act = document.getElementById('darkLikeAct');
+    act.classList.toggle('liked', darkLiked);
+    act.querySelector('i').className = darkLiked ? 'ti ti-heart-filled' : 'ti ti-heart';
+    document.getElementById('darkLikeCount').textContent = darkLikes.toLocaleString();
+  }
+
+  // ── Bookmark toggle ──
+  const bkState = {};
+  function toggleBookmark(id) {
+    bkState[id] = !bkState[id];
+    const btn = document.getElementById(id);
+    btn.classList.toggle('liked', bkState[id]);
+    btn.querySelector('i').className = bkState[id] ? 'ti ti-bookmark-filled' : 'ti ti-bookmark';
+  }
+
+  // ── Comment input ──
+  function focusComment() {
+    document.getElementById('commentInput').focus();
+  }
+  function handleCommentKey(e) {
+    if (e.key === 'Enter') sendComment();
+  }
+  function sendComment() {
+    const inp = document.getElementById('commentInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    const list = document.querySelector('.comments-list');
+    const div = document.createElement('div');
+    div.className = 'comment';
+    div.innerHTML = `
+      <div class="c-ava" style="background:linear-gradient(135deg,#667eea,#764ba2)">U</div>
+      <div class="c-body">
+        <span class="c-name">you</span>
+        <p class="c-text">${text.replace(/</g,'&lt;')}</p>
+        <div class="c-meta"><span>Just now</span><span>Reply</span></div>
+      </div>`;
+    list.appendChild(div);
+    inp.value = '';
+    div.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Scroll helpers ──
+  function scrollToDetail() {
+    document.getElementById('detailScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(focusComment, 400);
+  }
+  function scrollToFeed() {
+    document.querySelector('.phone-light').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Story viewer ──
+  let svTimer = null, svProgress = 0;
+
+  const gradients = [
+    'linear-gradient(135deg,#FF006E 0%,#8B00FF 50%,#00D9FF 100%)',
+    'linear-gradient(135deg,#833ab4 0%,#fd1d1d 50%,#fcb045 100%)',
+    'linear-gradient(135deg,#0099f7 0%,#f11712 100%)',
+    'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)',
+    'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)',
+    'linear-gradient(135deg,#fa709a 0%,#fee140 100%)',
+  ];
+  let svGradIdx = 0;
+
+  function openStory(el) {
+    const initial = el.dataset.initial;
+    const name    = el.dataset.name;
+    const idx     = [...document.querySelectorAll('.story')].indexOf(el);
+    svGradIdx = idx % gradients.length;
+
+    document.getElementById('svAva').textContent  = initial;
+    document.getElementById('svName').textContent = name;
+    document.getElementById('svBg').style.background = gradients[svGradIdx];
+
+    // reset fills
+    ['svFill1','svFill2','svFill3'].forEach(id => {
+      document.getElementById(id).style.width = '0%';
+    });
+
+    document.getElementById('storyModal').classList.add('open');
+    startSvProgress();
+  }
+
+  function startSvProgress() {
+    svProgress = 0;
+    clearInterval(svTimer);
+    const fill = document.getElementById('svFill1');
+    svTimer = setInterval(() => {
+      svProgress += 1;
+      fill.style.width = svProgress + '%';
+      if (svProgress >= 100) {
+        clearInterval(svTimer);
+        closeStory();
+      }
+    }, 50);
+  }
+
+  function closeStory() {
+    clearInterval(svTimer);
+    document.getElementById('storyModal').classList.remove('open');
+  }
+
+  function handleModalBgClick(e) {
+    if (e.target === document.getElementById('storyModal')) closeStory();
+  }
+</script>
+</body>
+</html>
